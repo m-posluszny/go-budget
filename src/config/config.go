@@ -30,13 +30,17 @@ func Init() Config {
 	viper.SetEnvKeyReplacer(replacer)
 	viper.SetConfigType("dotenv")
 	viper.SetConfigName(".env")
-	if err := viper.ReadInConfig(); err != nil {
+
+	err := viper.ReadInConfig()
+	if err != nil {
 		panic(err)
 	}
-	if err := viper.Unmarshal(&config); err != nil {
+
+	err = viper.Unmarshal(&config)
+	if err != nil {
 		panic(err)
 	}
-	viper.Debug()
+
 	viper.AutomaticEnv()
 	return *config
 }

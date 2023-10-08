@@ -1,33 +1,42 @@
 package auth
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/m-posluszny/go-ynab/src/db"
 )
 
-type LoginForm struct {
-	Username string `form:"username" binding:"required"`
-	Password string `form:"password" binding:"required"`
-}
-
 func LoginPage(c *gin.Context) {
-	c.HTML(http.StatusOK, "login.html", gin.H{})
+	RenderLogin(c, "", http.StatusOK)
 }
 
-func MatchPassword(c *gin.Context) {
+func LogoutAction(c *gin.Context) {
+	err := DeleteSession(c)
+	if err != nil {
+		fmt.Println(err)
+	}
+	c.Redirect(http.StatusFound, "/login")
 
 }
 
 func GetLoginForm(c *gin.Context) {
 	var form LoginForm
 	if err := c.ShouldBind(&form); err != nil {
-		c.HTML(http.StatusUnauthorized, "login.html", gin.H{"error": "Bad credentials"})
+		RenderLogin(c, "Bad credentials", http.StatusUnauthorized)
 	}
-	if form.Username == "admin" && form.Password == "admin" {
-		c.Redirect(http.StatusFound, "/home")
+	dbx := db.GetDbRead()
+	user, err := GetUserFromName(dbx, form.Username)
+	if err == nil && MatchPassword(dbx, form) {
+		CreateSession(c, user.Uid)
+		c.Redirect(http.StatusFound, "/panel")
 		return
 	} else {
-		c.HTML(http.StatusUnauthorized, "login.html", gin.H{"error": "Bad credentials"})
+		RenderLogin(c, "Bad credentials", http.StatusUnauthorized)
 	}
+}
+
+func RenderLogin(c *gin.Context, err string, status int) {
+	c.HTML(status, "login.html", gin.H{"error": err})
 }

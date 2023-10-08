@@ -4,6 +4,7 @@ services:
   server:
     build:
       context: .
+      dockerfile: ./Dockerfile
     hostname: server
     restart: unless-stopped
     volumes:
@@ -13,6 +14,7 @@ services:
       - APP_MODE=PRODUCTION
     depends_on:
       - db
+      - redis
     ports:
       - "7000:7000"
 
@@ -21,11 +23,14 @@ services:
     hostname: db
     restart: unless-stopped
     environment:
-      - POSTGRES_PASSWORD=${DB_WRITE_PASSWORD}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
       - 5432:5432
 
   redis:
-    image: redis
+    build:
+      context: ./redis
     hostname: redis
+    ports:
+      - 6379:6379
 

@@ -12,5 +12,5 @@ func main() {
 	cfg := config.Init()
 	fmt.Println("DB host:", cfg.Db.Host)
 	db.InitDbs(cfg.Db, cfg.Db)
-	server.Init(cfg.Server, cfg.Auth)
+	server.Init(cfg)
 }

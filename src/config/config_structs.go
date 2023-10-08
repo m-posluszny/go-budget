@@ -20,7 +20,9 @@ type ServerConf struct {
 }
 
 type RedisConf struct {
-	Host string `mapstructure:"REDIS_HOST"`
+	Host     string `mapstructure:"REDIS_HOST"`
+	Size     int    `mapstructure:"REDIS_SIZE"`
+	Password string `mapstructure:"REDIS_PASSWORD"`
 }
 
 type Config struct {
