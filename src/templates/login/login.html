@@ -1,0 +1,36 @@
+<html>
+  <head>
+    <title>GoBudget - Login</title>
+    <link rel="stylesheet" type="text/css" href="/static/style.css" />
+  </head>
+  <body>
+    <strong> {{ .error}} </strong>
+    <div>
+      <h2>Login</h2>
+      <form action="/login" method="POST">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required /><br />
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required /><br />
+        <button type="submit">Login</button>
+      </form>
+    </div>
+    <div>
+      <h2>Register</h2>
+      <form action="/register" method="POST">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required /><br />
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required /><br />
+        <label for="repassword">Repeat password:</label>
+        <input
+          type="password"
+          id="repassword"
+          name="repassword"
+          required
+        /><br />
+        <button type="submit">Register</button>
+      </form>
+    </div>
+  </body>
+</html>

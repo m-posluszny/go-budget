@@ -8,6 +8,7 @@ My motto for this project is to keep it JS free and keep it as simple as possibl
 # TO DO List
  - [ ] Authorization
  - [ ] Login screen
+ - [ ] Register screen
  - [ ] Storing transactions per account
  - [ ] Per month view for accounts
  - [ ] Budgets view, many months in one view
