@@ -4,33 +4,106 @@
     <link rel="stylesheet" type="text/css" href="/static/style.css" />
   </head>
   <body>
-    <strong> {{ .error}} </strong>
+    <table class="navbar">
+      <tbody>
+        <tr>
+          <td>
+            <span class="pagetop">
+              <strong> GoBudget </strong>
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
     <div>
-      <h2>Login</h2>
-      <form action="/login" method="POST">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required /><br />
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required /><br />
-        <button type="submit">Login</button>
-      </form>
-    </div>
-    <div>
-      <h2>Register</h2>
-      <form action="/register" method="POST">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required /><br />
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required /><br />
-        <label for="repassword">Repeat password:</label>
-        <input
-          type="password"
-          id="repassword"
-          name="repassword"
-          required
-        /><br />
-        <button type="submit">Register</button>
-      </form>
+    <div style="margin: 20pt 20pt">
+      <div class="mx-auto w-fit">
+        <h2>Login</h2>
+        <table >
+          <form action="/login" method="POST">
+            <tr>
+              <td>
+                <label for="username">Username:</label>
+              </td>
+              <td>
+                <input type="text" id="login-username" name="username" required />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label for="password">Password:</label>
+              </td>
+              <td>
+                <input
+                  type="password"
+                  id="login-password"
+                  name="password"
+                  required
+                />
+              </td>
+              <tr>
+                <td>
+                <button type="submit">Login</button>
+                </td>
+              </tr>
+            </tr>
+          </form>
+        </table>
+      </div>
+            <hr/>
+      <div class="mx-auto w-fit">
+        <h2>Register</h2>
+        <table>
+          <form action="/register" method="POST">
+            <tr>
+              <td>
+                <label for="username">Username:</label>
+              </td>
+              <td>
+                <input type="text" id="register-username" name="username" required />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label for="password">Password:</label>
+              </td>
+              <td>
+                <input
+                  type="password"
+                  id="register-password"
+                  name="password"
+                  required
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label for="repassword">Repeat password:</label>
+              </td>
+              <td>
+                <input
+                  type="password"
+                  id="repassword"
+                  name="repassword"
+                  required
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <button type="submit">Register</button>
+              </td>
+            </tr>
+          </form>
+        </table>
+      </div>
+      <hr>
+        {{if .error}}
+        <div class="error-message">
+          <h2 class="error-title">Error</h2>
+          <p class="error-desc"> {{ .error}} </p>
+        </div>
+        {{end}}
     </div>
   </body>
 </html>

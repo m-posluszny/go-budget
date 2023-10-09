@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/m-posluszny/go-ynab/src/config"
+	"github.com/m-posluszny/go-ynab/src/db"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/redis"
@@ -23,10 +24,18 @@ func InitAuthSession(authCfg config.AuthConf, redisConf config.RedisConf) gin.Ha
 }
 
 func AuthRequired(c *gin.Context) {
-	session := sessions.Default(c)
-	uid := session.Get(userKey)
-	if uid == nil {
-		c.Redirect(http.StatusConflict, "/login")
+	uid := GetUIDFromSession(c)
+	dbx := db.GetDbRead()
+	exists := false
+	if uid != "" {
+		creds, _ := GetUserFromUid(dbx, uid)
+		exists = creds != nil
+	}
+	fmt.Println("auth", uid, exists)
+	if !exists {
+		fmt.Println("redirect")
+		DeleteSession(c)
+		c.Redirect(http.StatusFound, "/login")
 		return
 	}
 	c.Next()
@@ -59,7 +68,6 @@ func DeleteSession(c *gin.Context) error {
 func GetUIDFromSession(c *gin.Context) string {
 	session := sessions.Default(c)
 	uid := session.Get(userKey)
-	fmt.Println("CHUID", uid)
 	if uid == nil {
 		return ""
 	}
