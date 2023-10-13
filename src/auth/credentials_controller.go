@@ -30,7 +30,7 @@ func (form LoginForm) HashedPassword() []byte {
 	return hashedPassword
 }
 
-func (form LoginForm) dbView() Credentials {
+func (form LoginForm) DbView() Credentials {
 	return Credentials{Username: form.Username, PasswordHash: form.HashedPassword()}
 }
 
@@ -50,7 +50,7 @@ func GetUserFromName(dbx *db.DBRead, username string) (*Credentials, error) {
 	return &creds, err
 }
 func CreateUser(dbx *db.DBWrite, form RegisterForm) (*Credentials, error) {
-	newUser := form.dbView()
+	newUser := form.DbView()
 	response, err := dbx.NamedExec(
 		`INSERT INTO credentials (username, uid, password_hash) VALUES (:username, gen_random_uuid(), :password_hash);`,
 		newUser)
@@ -61,7 +61,7 @@ func CreateUser(dbx *db.DBWrite, form RegisterForm) (*Credentials, error) {
 	return GetUserFromName(dbx, newUser.Username)
 }
 
-func MatchPassword(dbx *db.DBRead, form LoginForm) bool {
+func MustMatchPassword(dbx *db.DBRead, form LoginForm) bool {
 	creds, err := GetUserFromName(dbx, form.Username)
 	if err != nil {
 		panic(err)

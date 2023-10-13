@@ -11,10 +11,7 @@ func SetRoutes(r *gin.Engine) {
 	userPanel := r.Group("/panel")
 	userPanel.Use(auth.AuthRequired)
 	{
-		userPanel.GET("/", func(c *gin.Context) {
-			uid := auth.GetUIDFromSession(c)
-			RenderPanel(c, uid, http.StatusOK)
-		})
+		userPanel.GET("/", RenderPanel)
 
 	}
 	r.GET("/", func(c *gin.Context) {

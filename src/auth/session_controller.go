@@ -23,19 +23,21 @@ func InitAuthSession(authCfg config.AuthConf, redisConf config.RedisConf) gin.Ha
 	return sessions.Sessions("auth_session", session)
 }
 
-func AuthRequired(c *gin.Context) {
-	uid := GetUIDFromSession(c)
-	dbx := db.GetDbRead()
-	exists := false
-	if uid != "" {
-		creds, _ := GetUserFromUid(dbx, uid)
-		exists = creds != nil
+func DeauthRedirect(c *gin.Context) {
+	err := DeleteSession(c)
+	if err != nil {
+		fmt.Println(err)
 	}
-	fmt.Println("auth", uid, exists)
-	if !exists {
-		fmt.Println("redirect")
-		DeleteSession(c)
-		c.Redirect(http.StatusFound, "/login")
+	c.Redirect(http.StatusFound, "/login")
+}
+
+func AuthRequired(c *gin.Context) {
+
+	dbx := db.GetDbRead()
+	uid, err := GetUIDFromSession(c)
+	_, userErr := GetUserFromUid(dbx, uid)
+	if err != nil || userErr != nil {
+		DeauthRedirect(c)
 		return
 	}
 	c.Next()
@@ -65,11 +67,11 @@ func DeleteSession(c *gin.Context) error {
 
 }
 
-func GetUIDFromSession(c *gin.Context) string {
+func GetUIDFromSession(c *gin.Context) (string, error) {
 	session := sessions.Default(c)
 	uid := session.Get(userKey)
 	if uid == nil {
-		return ""
+		return "", errors.New("empty user uid")
 	}
-	return uid.(string)
+	return uid.(string), nil
 }
