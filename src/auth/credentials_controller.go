@@ -49,7 +49,7 @@ func GetUserFromName(dbx *db.DBRead, username string) (*Credentials, error) {
 		username)
 	return &creds, err
 }
-func CreateUser(dbx *db.DBWrite, form RegisterForm) (*Credentials, error) {
+func CreateUser(dbx *db.DBWrite, form LoginForm) (*Credentials, error) {
 	newUser := form.DbView()
 	response, err := dbx.NamedExec(
 		`INSERT INTO credentials (username, uid, password_hash) VALUES (:username, gen_random_uuid(), :password_hash);`,

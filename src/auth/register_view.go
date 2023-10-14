@@ -47,7 +47,7 @@ func GetRegisterForm(c *gin.Context) {
 		return
 	}
 	dbx := db.GetDbWrite()
-	creds, err := CreateUser(dbx, form)
+	creds, err := CreateUser(dbx, form.LoginForm)
 	if err != nil {
 		RenderLogin(c, "Username already taken", http.StatusForbidden)
 		return
