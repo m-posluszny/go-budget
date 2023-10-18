@@ -1,8 +1,6 @@
 package auth
 
 import (
-	"fmt"
-
 	"github.com/m-posluszny/go-ynab/src/db"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -49,12 +47,10 @@ func GetUserFromName(dbx *db.DBRead, username string) (*Credentials, error) {
 		username)
 	return &creds, err
 }
-func CreateUser(dbx *db.DBWrite, form LoginForm) (*Credentials, error) {
-	newUser := form.DbView()
-	response, err := dbx.NamedExec(
+func CreateUser(dbx *db.DBWrite, newUser Credentials) (*Credentials, error) {
+	_, err := dbx.NamedExec(
 		`INSERT INTO credentials (username, uid, password_hash) VALUES (:username, gen_random_uuid(), :password_hash);`,
 		newUser)
-	fmt.Println(response, err)
 	if err != nil {
 		return nil, err
 	}

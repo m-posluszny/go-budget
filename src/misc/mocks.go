@@ -16,7 +16,6 @@ func GetMockDb() (*sqlx.DB, sqlmock.Sqlmock) {
 }
 
 func FetchExpects(t *testing.T, mock sqlmock.Sqlmock) {
-
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)
 	}
