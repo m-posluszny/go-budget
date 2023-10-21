@@ -6,21 +6,15 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/m-posluszny/go-ynab/src/config"
 	"github.com/m-posluszny/go-ynab/src/db"
 
 	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/redis"
 )
 
 const userKey = "uid"
 
-func InitAuthSession(authCfg config.AuthConf, redisConf config.RedisConf) gin.HandlerFunc {
-	session, err := redis.NewStore(redisConf.Size, "tcp", redisConf.Host, redisConf.Password, []byte(authCfg.Secret))
-	if err != nil {
-		panic(err)
-	}
-	return sessions.Sessions("auth_session", session)
+func InitAuthSession(store sessions.Store) gin.HandlerFunc {
+	return sessions.Sessions("auth_session", store)
 }
 
 func DeauthRedirect(c *gin.Context) {
@@ -37,7 +31,9 @@ func AuthRequired(c *gin.Context) {
 	uid, err := GetUIDFromSession(c)
 	_, userErr := GetUserFromUid(dbx, uid)
 	if err != nil || userErr != nil {
+		fmt.Println("deauth")
 		DeauthRedirect(c)
+		c.Abort()
 		return
 	}
 	c.Next()

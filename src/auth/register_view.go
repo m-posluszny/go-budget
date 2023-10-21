@@ -2,6 +2,7 @@ package auth
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"regexp"
@@ -10,8 +11,8 @@ import (
 	"github.com/m-posluszny/go-ynab/src/db"
 )
 
-var isUsernameValid = regexp.MustCompile(`^[a-zA-Z]+$`).MatchString
-var isPasswordValid = regexp.MustCompile(`^[a-zA-Z]+$`).MatchString
+var isUsernameValid = regexp.MustCompile(`^[a-zA-Z0-9]+$`).MatchString
+var isPasswordValid = regexp.MustCompile(`^[a-zA-Z0-9]+$`).MatchString
 
 func validateLength(s string, min int, max int) bool {
 	l := len(s)
@@ -20,6 +21,7 @@ func validateLength(s string, min int, max int) bool {
 
 func validateForm(c *gin.Context, form *RegisterForm) error {
 	if err := c.ShouldBind(form); err != nil {
+		fmt.Println(err)
 		return errors.New("invalid input")
 	}
 	if !validateLength(form.Username, 4, 24) {
@@ -43,6 +45,7 @@ func validateForm(c *gin.Context, form *RegisterForm) error {
 func GetRegisterForm(c *gin.Context) {
 	var form RegisterForm
 	if err := validateForm(c, &form); err != nil {
+		fmt.Println(err)
 		RenderLogin(c, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -50,6 +53,7 @@ func GetRegisterForm(c *gin.Context) {
 	creds, err := CreateUser(dbx, form.LoginForm.DbView())
 	if err != nil {
 		RenderLogin(c, "Username already taken", http.StatusForbidden)
+		fmt.Println(err)
 		return
 	}
 	CreateSession(c, creds.Uid)

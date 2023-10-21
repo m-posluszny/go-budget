@@ -8,8 +8,13 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/m-posluszny/go-ynab/src/auth"
+	"github.com/m-posluszny/go-ynab/src/db"
 	"github.com/m-posluszny/go-ynab/src/misc"
 )
+
+func MockRegisterForm() auth.RegisterForm {
+	return auth.RegisterForm{MockLoginForm(), MockLoginForm().Password}
+}
 
 func MockLoginForm() auth.LoginForm {
 	return auth.LoginForm{Username: "abcd", Password: "abcd1234"}
@@ -38,11 +43,10 @@ func MockValidateCredentials(creds auth.Credentials, mock auth.Credentials, t *t
 }
 
 func TestGetUserFromUid(t *testing.T) {
-	db, mock := misc.GetMockDb()
+	db, mock := db.GetMockDb()
 
 	mockCreds := MockCredentials()
-	mock.ExpectQuery(
-		`SELECT uid, username, password_hash FROM credentials WHERE uid=\$1;`).WithArgs(mockCreds.Uid).WillReturnRows(CredsToRow(mock, mockCreds))
+	MockGetByUid(&mock, mockCreds)
 
 	creds, err := auth.GetUserFromUid(db, mockCreds.Uid)
 	if err != nil {
@@ -55,7 +59,7 @@ func TestGetUserFromUid(t *testing.T) {
 }
 
 func TestGetUserFromUidErr(t *testing.T) {
-	db, _ := misc.GetMockDb()
+	db, _ := db.GetMockDb()
 	_, err := auth.GetUserFromUid(db, "")
 	if err == nil {
 		fmt.Println(err)
@@ -64,11 +68,10 @@ func TestGetUserFromUidErr(t *testing.T) {
 }
 
 func TestGetUserFromName(t *testing.T) {
-	db, mock := misc.GetMockDb()
+	db, mock := db.GetMockDb()
 
 	mockCreds := MockCredentials()
-	mock.ExpectQuery(
-		`SELECT uid, username, password_hash FROM credentials WHERE username=\$1;`).WithArgs(mockCreds.Username).WillReturnRows(CredsToRow(mock, mockCreds))
+	MockGetByUsername(&mock, mockCreds)
 
 	creds, err := auth.GetUserFromName(db, mockCreds.Username)
 	if err != nil {
@@ -81,7 +84,7 @@ func TestGetUserFromName(t *testing.T) {
 }
 
 func TestGetUserFromNameErr(t *testing.T) {
-	db, _ := misc.GetMockDb()
+	db, _ := db.GetMockDb()
 	_, err := auth.GetUserFromName(db, "")
 	if err == nil {
 		fmt.Println(err)
@@ -89,12 +92,24 @@ func TestGetUserFromNameErr(t *testing.T) {
 	}
 }
 
+func MockCreateUser(mock *sqlmock.Sqlmock, mockCreds auth.Credentials) {
+	(*mock).ExpectExec(`INSERT INTO credentials \(username, uid, password_hash\) VALUES \(\?, gen_random_uuid\(\), \?\);`).WithArgs(mockCreds.Username, mockCreds.PasswordHash).WillReturnResult(sqlmock.NewResult(0, 1))
+}
+
+func MockGetByUsername(mock *sqlmock.Sqlmock, mockCreds auth.Credentials) {
+	(*mock).ExpectQuery(
+		`SELECT uid, username, password_hash FROM credentials WHERE username=\$1;`).WithArgs(mockCreds.Username).WillReturnRows(CredsToRow((*mock), mockCreds))
+}
+func MockGetByUid(mock *sqlmock.Sqlmock, mockCreds auth.Credentials) {
+	(*mock).ExpectQuery(
+		`SELECT uid, username, password_hash FROM credentials WHERE uid=\$1;`).WithArgs(mockCreds.Uid).WillReturnRows(CredsToRow((*mock), mockCreds))
+}
+
 func TestCreateUser(t *testing.T) {
-	db, mock := misc.GetMockDb()
+	db, mock := db.GetMockDb()
 	mockCreds := MockCredentials()
-	mock.ExpectExec(`INSERT INTO credentials \(username, uid, password_hash\) VALUES \(\?, gen_random_uuid\(\), \?\);`).WithArgs(mockCreds.Username, mockCreds.PasswordHash).WillReturnResult(sqlmock.NewResult(0, 1))
-	mock.ExpectQuery(
-		`SELECT uid, username, password_hash FROM credentials WHERE username=\$1;`).WithArgs(mockCreds.Username).WillReturnRows(CredsToRow(mock, mockCreds))
+	MockCreateUser(&mock, mockCreds)
+	MockGetByUsername(&mock, MockCredentials())
 	_, err := auth.CreateUser(db, mockCreds)
 	if err != nil {
 		fmt.Println(err)
@@ -105,7 +120,7 @@ func TestCreateUser(t *testing.T) {
 }
 
 func TestCreateUserErr(t *testing.T) {
-	db, mock := misc.GetMockDb()
+	db, mock := db.GetMockDb()
 	mockCreds := MockCredentials()
 	mock.ExpectExec(`INSERT INTO credentials \(username, uid, password_hash\) VALUES \(\?, gen_random_uuid\(\), \?\);`).WithArgs(mockCreds.Username, mockCreds.PasswordHash).WillReturnError(errors.New("db write error"))
 	_, err := auth.CreateUser(db, mockCreds)

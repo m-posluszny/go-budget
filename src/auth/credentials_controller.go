@@ -6,12 +6,12 @@ import (
 )
 
 type LoginForm struct {
-	Username string `form:"username" binding:"required"`
-	Password string `form:"password" binding:"required"`
+	Username string `form:"username" binding:"required" url:"username"`
+	Password string `form:"password" binding:"required" url:"password"`
 }
 type RegisterForm struct {
 	LoginForm
-	RePassword string `form:"repassword" binding:"required"`
+	RePassword string `form:"repassword" binding:"required" url:"repassword"`
 }
 
 type Credentials struct {
@@ -20,8 +20,17 @@ type Credentials struct {
 	PasswordHash []byte `db:"password_hash"`
 }
 
+var GenerateHashPassword = func(p []byte) ([]byte, error) {
+	return bcrypt.GenerateFromPassword(p, bcrypt.DefaultCost)
+}
+
+var CompareHashAndPassword = func(h []byte, p []byte) error {
+	return bcrypt.CompareHashAndPassword(h, p)
+
+}
+
 func (form LoginForm) HashedPassword() []byte {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(form.Password), bcrypt.DefaultCost)
+	hashedPassword, err := GenerateHashPassword([]byte(form.Password))
 	if err != nil {
 		panic(err)
 	}
@@ -62,5 +71,5 @@ func MustMatchPassword(dbx *db.DBRead, form LoginForm) bool {
 	if err != nil {
 		panic(err)
 	}
-	return bcrypt.CompareHashAndPassword(creds.PasswordHash, []byte(form.Password)) == nil
+	return CompareHashAndPassword(creds.PasswordHash, []byte(form.Password)) == nil
 }

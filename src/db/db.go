@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 
+	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	"github.com/m-posluszny/go-ynab/src/config"
@@ -21,6 +22,20 @@ func InitDbs(readInfo config.DbConf, writeInfo config.DbConf) {
 	fmt.Println("Loading schema")
 	res, err := sqlx.LoadFile(dbWrite, "./src/db/schema.sql")
 	fmt.Println("DONE:", res != nil, "ERROR:", err)
+}
+
+func GetMockDb() (*sqlx.DB, sqlmock.Sqlmock) {
+	mockDB, mock, err := sqlmock.New()
+	if err != nil {
+		panic(err)
+	}
+	return sqlx.NewDb(mockDB, "sqlmock"), mock
+}
+
+func InitMockDbs() (dbReadMock sqlmock.Sqlmock, dbWriteMock sqlmock.Sqlmock) {
+	dbRead, dbReadMock = GetMockDb()
+	dbWrite, dbWriteMock = GetMockDb()
+	return dbReadMock, dbWriteMock
 }
 
 func GetDbWrite() *DBWrite {
