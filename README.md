@@ -6,8 +6,8 @@ Goal is to recreate simple transaction store per account, with custom categories
 My motto for this project is to keep it JS free and keep it as simple as possible
 
 # TO DO List
- - [ ] Authorization
- - [ ] Login screen
+ - [x] Authorization
+ - [x] Login screen
  - [ ] Storing transactions per account
  - [ ] Per month view for accounts
  - [ ] Budgets view, many months in one view
