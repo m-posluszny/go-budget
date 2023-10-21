@@ -1,0 +1,55 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+}
+
+a{
+    margin: 2pt 8pt;
+    color: #000000;
+    text-decoration: none;
+}
+.navbar{
+    background-color: rgb(0, 153, 255);
+    border-color:  rgb(0, 153, 255);
+    border-style: solid;
+    border-radius: 5pt;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+.mx-auto{
+    margin-left: auto;
+    margin-right: auto;
+}
+.nav-profile{
+    text-align: right;
+}
+
+
+.pagetop{
+ margin: 8px 15px;
+ font-size: 20pt;
+ line-height: normal;
+ display: block;
+}
+
+.selected{
+    border-bottom: #000000;
+    border-bottom-style: solid;
+}
+
+.error-message{
+    font-size: 12pt;
+    background-color: lightcoral;
+    border-style: solid;
+    border-radius: 5pt;
+    width: fit-content;
+    padding: 2pt 4pt;
+    padding-right: 20pt;
+}
+.error-title{
+    margin: 2px 0px;
+}
+.error-desc{
+    margin: 5px 0px;
+}
