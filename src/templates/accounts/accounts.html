@@ -1,6 +1,6 @@
 <html lang="en">
     <head>
-        <title>GoBudget - Panel</title>
+        <title>GoBudget - Accounts</title>
         <link rel="stylesheet" type="text/css" href="/static/style.css" />
         <link rel="stylesheet" type="text/css" href="/static/sizing.css" />
     </head>
@@ -12,8 +12,9 @@
                         <td>
                             <span class="pagetop">
                                 <strong> GoBudget </strong>|
-                                <a href="/panel" class="navbar-element selected">Panel</a>
-                                <a href="/panel/accounts" class="navbar-element">Accounts</a>
+                                <a href="/panel" class="navbar-element">Panel</a>
+                                <a href="/panel/accounts"
+                                    class="navbar-element  selected">Accounts</a>
                                 <a href="/panel/budgets" class="navbar-element">Monthly
                                     Budgets</a>
                             </span>
@@ -28,17 +29,15 @@
                     </tr>
                 </tbody>
             </table>
-            <p>Welcome to GoBudget!</p>
-            <p>
-                Later you'll be able to see here, some stats, charts regarding
-                your
-                expenses.
-            </p>
-            <p>
-                Right now you can access your <a href="/panel/accounts">accounts</a>
-                and
-                <a href="/panel/budgets">budgets</a>
-            </p>
+            <div class="acc-list">
+                <div class="acc-tile">
+                    Account 1
+                </div>
+                <div class="acc-tile">
+                    Account 2
+                </div>
+
+            </div>
         </main>
         <footer class="mt-auto">
             <hr />

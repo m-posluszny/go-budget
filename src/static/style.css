@@ -1,11 +1,18 @@
 body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
+
+    min-height: 99vh;
+    display: flex;
+    flex-direction: column;
 }
 
+
 a{
-    margin: 2pt 8pt;
     color: #000000;
+}
+.navbar-element{
+    margin: 2pt 8pt;
     text-decoration: none;
 }
 .navbar{
@@ -21,10 +28,26 @@ a{
     margin-left: auto;
     margin-right: auto;
 }
+.ml-auto{
+    margin-left: auto;
+}
+.mr-auto{
+    margin-right: auto;
+}
+
+.mt-auto{
+    margin-top: auto;
+}
+
 .nav-profile{
     text-align: right;
 }
 
+.ft-text{
+    text-align: center;
+    font-size: 10pt;
+    margin: 0pt 8pt;
+}
 
 .pagetop{
  margin: 8px 15px;
@@ -36,6 +59,20 @@ a{
 .selected{
     border-bottom: #000000;
     border-bottom-style: solid;
+}
+
+.acc-list{
+    width: 20%;
+    margin: 10pt 5pt;
+}
+
+.acc-tile{
+    border: #000000;
+    border-radius: 10pt;
+    border-style: solid;
+    font-size: 20pt;
+    padding: 5pt;
+    margin-bottom: 5pt;
 }
 
 .error-message{
