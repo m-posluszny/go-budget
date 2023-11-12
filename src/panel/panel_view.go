@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/m-posluszny/go-ynab/src/auth"
 	"github.com/m-posluszny/go-ynab/src/db"
+	"github.com/m-posluszny/go-ynab/src/misc"
 )
 
 func RenderPanel(c *gin.Context) {
@@ -18,5 +19,5 @@ func RenderPanel(c *gin.Context) {
 	if err != nil {
 		panic(err)
 	}
-	c.HTML(http.StatusOK, "panel.html", gin.H{"username": creds.Username})
+	c.HTML(http.StatusOK, "panel.html", gin.H{"username": creds.Username, "category": misc.Panel})
 }

@@ -11,14 +11,14 @@ import (
 	"github.com/google/go-querystring/query"
 	"github.com/m-posluszny/go-ynab/src/auth"
 	"github.com/m-posluszny/go-ynab/src/db"
-	"github.com/m-posluszny/go-ynab/src/misc"
+	"github.com/m-posluszny/go-ynab/src/misc_tests"
 )
 
 func TestSessionRegister(t *testing.T) {
 	_, mockw := db.InitMockDbs()
-	misc.MockHashPassword()
+	misc_tests.MockHashPassword()
 	form := MockRegisterForm()
-	w, s := misc.GetGinMock()
+	w, s := misc_tests.GetGinMock()
 
 	mockCreds := MockCredentials()
 	mockCreds.PasswordHash = form.DbView().PasswordHash
@@ -49,7 +49,7 @@ func MockLogin(w *httptest.ResponseRecorder, s *gin.Engine, mockr sqlmock.Sqlmoc
 }
 
 func TestSessionLogin(t *testing.T) {
-	w, s, mockr, _ := misc.MockInitMockServer()
+	w, s, mockr, _ := misc_tests.MockInitMockServer()
 	formValues := MockLogin(w, s, mockr, MockLoginForm())
 	if code := w.Code; code != 302 {
 		t.Error("Wrong status code", code, formValues)
@@ -57,7 +57,7 @@ func TestSessionLogin(t *testing.T) {
 }
 
 func TestSessionLogout(t *testing.T) {
-	w, s, mockr, _ := misc.MockInitMockServer()
+	w, s, mockr, _ := misc_tests.MockInitMockServer()
 	MockLogin(w, s, mockr, MockLoginForm())
 
 	req, _ := http.NewRequest("GET", "/logout", nil)
@@ -71,14 +71,14 @@ func TestSessionLogout(t *testing.T) {
 	if code := w.Code; code != 302 {
 		t.Error("Wrong status code", code)
 	}
-	if !misc.CompareBody(w, `<a href="/login">Found`) {
+	if !misc_tests.CompareBody(w, `<a href="/login">Found`) {
 		t.Error("Wrong redirection", w.Body.String())
 	}
 
 }
 
 func TestAccessPanel(t *testing.T) {
-	w, s, mockr, _ := misc.MockInitMockServer()
+	w, s, mockr, _ := misc_tests.MockInitMockServer()
 	MockLogin(w, s, mockr, MockLoginForm())
 	req, _ := http.NewRequest("GET", "/panel/", nil)
 	req.AddCookie(w.Result().Cookies()[0])
@@ -89,14 +89,14 @@ func TestAccessPanel(t *testing.T) {
 	if code := w.Code; code != 302 {
 		t.Error("Wrong status code", code)
 	}
-	if !misc.CompareBody(w, `<title>GoBudget - Panel</title>`) {
+	if !misc_tests.CompareBody(w, `<title>GoBudget - Panel</title>`) {
 		t.Error("Wrong redirection")
 	}
 
 }
 
 func TestAccessPanelFail(t *testing.T) {
-	w, s, _, _ := misc.MockInitMockServer()
+	w, s, _, _ := misc_tests.MockInitMockServer()
 	req, _ := http.NewRequest("GET", "/panel/", nil)
 	creds := MockCredentials()
 	creds.Uid = "-"
@@ -104,7 +104,7 @@ func TestAccessPanelFail(t *testing.T) {
 	if code := w.Code; code != 302 {
 		t.Error("Wrong status code", code)
 	}
-	if !misc.CompareBody(w, `<a href="/login">Found`) {
+	if !misc_tests.CompareBody(w, `<a href="/login">Found`) {
 		t.Error("Wrong redirection", w.Body.String())
 	}
 

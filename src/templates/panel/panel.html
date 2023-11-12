@@ -1,33 +1,13 @@
+<!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>GoBudget - Panel</title>
-        <link rel="stylesheet" type="text/css" href="/static/style.css" />
-    </head>
-    <body>
-        <main>
-            <table class="navbar">
-                <tbody>
-                    <tr>
-                        <td>
-                            <span class="">
-                                <strong> GoBudget </strong>|
-                                <a href="/panel" class="navbar-element selected">Panel</a>
-                                <a href="/panel/accounts" class="navbar-element">Accounts</a>
-                                <a href="/panel/budgets" class="navbar-element">Monthly
-                                    Budgets</a>
-                            </span>
-                        </td>
-                        <td class="mx-auto"></td>
-                        <td>
-                            <span class="pagetop nav-profile">
-                                {{ .username}} |
-                                <a href="/logout">logout</a>
-                            </span>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <p>Welcome to GoBudget!</p>
+{{ template "head.html" "Panel" }}
+
+<body class="container">
+    {{ template "navbar.html" .}}
+    <main class="main m-3">
+        <div class="tile w-fit mx-auto italic">
+            <p class="bold">Welcome to GoBudget!</p>
+            <hr class="my-2 font-bold">
             <p>
                 Later you'll be able to see here, some stats, charts regarding
                 your
@@ -38,16 +18,9 @@
                 and
                 <a href="/panel/budgets">budgets</a>
             </p>
-        </main>
-        <footer class="mt-auto">
-            <hr />
-            <div class="ft-text">
-                <span class="ft-text"> © 2023 Michał Posłuszny </span>
-                <a class="ft-text"
-                    href="https://github.com/m-posluszny/go-budget">
-                    GitHub
-                </a>
-            </div>
-        </footer>
-    </body>
+        </div>
+    </main>
+    {{ template "footer.html" }}
+</body>
+
 </html>

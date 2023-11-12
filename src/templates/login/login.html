@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html>
 
-{{ template "title.html" "Sign in" }}
+{{ template "head.html" "Sign in" }}
 
 <body class="container">
     {{ template "logo.html"}}
-    <main class="h-100 w-100 mx-auto">
+    <main class="main">
         {{ template "form-error.html" .error }}
-        <div class="mx-auto w-fit bg-white shadow-md rounded px-8">
+        <div class="mx-auto w-fit tile">
             {{ template "login-form.html" }}
             <div class="text-center pb-5">
-                <a href="/register" class=" w-100 text-blue-500 hover:text-blue-700 mx-auto">Don't have an
+                <a href="/register" class=" text-blue-500 hover:text-blue-700 mx-auto">Don't have an
                     account?
                     Sign
                     up</a>

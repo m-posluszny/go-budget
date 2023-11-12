@@ -12,19 +12,20 @@ import (
 
 func Init(cfg config.Config, store sessions.Store, templateDir string) *gin.Engine {
 	gin.SetMode(cfg.Server.Mode)
-	server := gin.Default()
+	srv := gin.Default()
 
-	server.LoadHTMLGlob(templateDir)
-	server.StaticFS("/static", http.Dir("./src/static"))
+	srv.SetFuncMap(FuncMap)
+	srv.LoadHTMLGlob(templateDir)
+	srv.StaticFS("/static", http.Dir("./src/static"))
 
 	authSess := auth.InitAuthSession(store)
 
-	server.Use(authSess)
-	server.Use(gin.CustomRecovery(func(c *gin.Context, err any) {
+	srv.Use(authSess)
+	srv.Use(gin.CustomRecovery(func(c *gin.Context, err any) {
 		auth.RenderLogin(c, "Unknown Server Error", http.StatusFound)
 	}))
-	loadRoutes(server)
-	return server
+	loadRoutes(srv)
+	return srv
 }
 
 func loadRoutes(r *gin.Engine) {

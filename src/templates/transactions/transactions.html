@@ -1,5 +1,5 @@
 <html lang="en">
-{{ template "head.html" "Accounts" }}
+{{ template "head.html" .account.Name }}
 
 <body class="container">
     {{ template "navbar.html" .}}
@@ -8,7 +8,7 @@
             {{ template "accounts-list.html" .}}
         </div>
         <div class="p-2">
-            {{ template "accounts-form.html" .}}
+            {{ template "transactions-list.html" .}}
         </div>
 
     </main>

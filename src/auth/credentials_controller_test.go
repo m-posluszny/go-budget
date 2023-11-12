@@ -9,7 +9,7 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/m-posluszny/go-ynab/src/auth"
 	"github.com/m-posluszny/go-ynab/src/db"
-	"github.com/m-posluszny/go-ynab/src/misc"
+	"github.com/m-posluszny/go-ynab/src/misc_tests"
 )
 
 func MockRegisterForm() auth.RegisterForm {
@@ -54,7 +54,7 @@ func TestGetUserFromUid(t *testing.T) {
 		t.Error("This test should not create err")
 	}
 	MockValidateCredentials(*creds, mockCreds, t)
-	misc.FetchExpects(t, mock)
+	misc_tests.FetchExpects(t, mock)
 
 }
 
@@ -79,7 +79,7 @@ func TestGetUserFromName(t *testing.T) {
 		t.Error("This test should not create err")
 	}
 	MockValidateCredentials(*creds, mockCreds, t)
-	misc.FetchExpects(t, mock)
+	misc_tests.FetchExpects(t, mock)
 
 }
 
@@ -115,7 +115,7 @@ func TestCreateUser(t *testing.T) {
 		fmt.Println(err)
 		t.Error("This test should not create err")
 	}
-	misc.FetchExpects(t, mock)
+	misc_tests.FetchExpects(t, mock)
 
 }
 
@@ -128,6 +128,6 @@ func TestCreateUserErr(t *testing.T) {
 		fmt.Println(err)
 		t.Error("This test should create err")
 	}
-	misc.FetchExpects(t, mock)
+	misc_tests.FetchExpects(t, mock)
 
 }

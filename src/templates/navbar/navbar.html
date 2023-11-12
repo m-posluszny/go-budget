@@ -1,24 +1,13 @@
-<table>
-    <tbody>
-        <tr>
-            <td>
-                <span class="">
-                    <strong> GoBudget </strong>|
-                    <a href="/panel" class="navbar-element selected">Panel</a>
+<div class="flex w-full p-3 bg-orange-300">
+    <strong> GoBudget </strong>
+    <div class="mx-2">
+        |
+    </div>
+    {{ template "navitem.html" dict "title" "Panel" "href" "/panel" "current" .category }}
+    {{ template "navitem.html" dict "title" "Accounts" "href" "/panel/accounts" "current" .category }}
 
-                    <a href="/panel/accounts" class="navbar-element">Accounts</a>
-                    <a href="/panel/budgets" class="navbar-element">Monthly
-                        Budgets</a>
-
-                </span>
-            </td>
-            <td class="mx-auto"></td>
-            <td>
-                <span class="pagetop nav-profile">
-                    {{ .username}} |
-                    <a href="/logout">logout</a>
-                </span>
-            </td>
-        </tr>
-    </tbody>
-</table>
+    <span class="ms-auto">
+        {{ .username}} |
+        <a href="/logout">logout</a>
+    </span>
+</div>
