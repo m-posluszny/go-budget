@@ -18,6 +18,13 @@ func validateLength(s string, min int, max int) bool {
 	l := len(s)
 	return min <= l && l <= max
 }
+func RegisterPage(c *gin.Context) {
+	RenderRegister(c, "", http.StatusOK)
+}
+
+func RenderRegister(c *gin.Context, err string, status int) {
+	c.HTML(status, "register.html", gin.H{"error": err})
+}
 
 func validateForm(c *gin.Context, form *RegisterForm) error {
 	if err := c.ShouldBind(form); err != nil {
@@ -46,13 +53,13 @@ func GetRegisterForm(c *gin.Context) {
 	var form RegisterForm
 	if err := validateForm(c, &form); err != nil {
 		fmt.Println(err)
-		RenderLogin(c, err.Error(), http.StatusBadRequest)
+		RenderRegister(c, err.Error(), http.StatusBadRequest)
 		return
 	}
 	dbx := db.GetDbWrite()
 	creds, err := CreateUser(dbx, form.LoginForm.DbView())
 	if err != nil {
-		RenderLogin(c, "Username already taken", http.StatusForbidden)
+		RenderRegister(c, "Username already taken", http.StatusForbidden)
 		fmt.Println(err)
 		return
 	}

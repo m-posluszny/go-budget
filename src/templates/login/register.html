@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+
+{{ template "title.html" "Sign up" }}
+
+<body class="container">
+    {{ template "logo.html" }}
+    <main class=" h-100">
+        <div class="mx-auto w-fit bg-white  shadow-md rounded px-8">
+            {{ template "form-error.html" .error }}
+            {{ template "register-form.html"}}
+            <div class="text-center pb-5">
+                <a href="/login" class=" w-100 text-blue-500 hover:text-blue-700 mx-auto">Already have an account? Sign
+                    in</a>
+            </div>
+        </div>
+    </main>
+    {{ template "footer.html"}}
+
+</body>
+
+</html>
