@@ -15,6 +15,7 @@ services:
     build:
       context: ./redis
       dockerfile: ./Dockerfile.redis
+    restart: unless-stopped
     hostname: redis
     ports:
       - 6379:6379

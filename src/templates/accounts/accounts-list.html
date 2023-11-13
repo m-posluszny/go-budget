@@ -1,13 +1,13 @@
 <div class="tile">
     <a href="/panel/accounts"
-        class="flex text-center font-bold mb-5 border rounded-lg  bg-orange-400 hover:bg-orange-300 shadow p-2 w-full">
+        class="flex text-center font-bold mb-5 border rounded-lg  bg-orange-300 hover:bg-orange-200 shadow p-2 w-full">
         + Create Account
     </a>
     <h3 class="pb-2">
         Budget Accounts
     </h3>
     <div class="overflow-auto">
-        {{range .accountsBudget}}
+        {{range .Budget}}
         {{template "account-tile.html" .}}
         {{end}}
     </div>
@@ -16,7 +16,7 @@
         Off Budget Accounts
     </h3>
     <div class="overflow-auto">
-        {{range .accountsOffbudget}}
+        {{range .Offbudget}}
         {{template "account-tile.html" .}}
         {{end}}
     </div>

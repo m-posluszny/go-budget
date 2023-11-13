@@ -1,13 +1,13 @@
-<div class="flex w-full p-3 bg-orange-300">
+<div class="shadow flex w-full p-3 bg-orange-300">
     <strong> GoBudget </strong>
     <div class="mx-2">
         |
     </div>
-    {{ template "navitem.html" dict "title" "Panel" "href" "/panel" "current" .category }}
-    {{ template "navitem.html" dict "title" "Accounts" "href" "/panel/accounts" "current" .category }}
+    {{ template "navitem.html" dict "title" "Panel" "href" "/panel" "current" .Category }}
+    {{ template "navitem.html" dict "title" "Accounts" "href" "/panel/accounts" "current" .Category }}
 
     <span class="ms-auto">
-        {{ .username}} |
+        {{ .Username}} |
         <a href="/logout">logout</a>
     </span>
 </div>

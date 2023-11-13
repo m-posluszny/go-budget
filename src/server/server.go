@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/m-posluszny/go-ynab/src/auth"
 	"github.com/m-posluszny/go-ynab/src/config"
-	"github.com/m-posluszny/go-ynab/src/panel"
+	"github.com/m-posluszny/go-ynab/src/menu"
 )
 
 func Init(cfg config.Config, store sessions.Store, templateDir string) *gin.Engine {
@@ -30,6 +30,6 @@ func Init(cfg config.Config, store sessions.Store, templateDir string) *gin.Engi
 
 func loadRoutes(r *gin.Engine) {
 	auth.SetRouters(r)
-	panel.SetRoutes(r)
+	menu.SetRoutes(r)
 
 }

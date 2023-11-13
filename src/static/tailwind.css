@@ -4,16 +4,19 @@
 
 @layer components {
   .main {
-    @apply w-full mx-auto
+    @apply  mx-auto
+  }
+  .row-input{
+    @apply bg-bottom
   }
   .th{
-    @apply border-b  border-slate-600 
+    @apply border-b 
   }
   .td{
-    @apply border-b border-slate-700 p-3
+    @apply p-0 border border-slate-300
   }
   .tr{
-    @apply even:bg-gray-200 hover:bg-orange-200 p-3
+    @apply even:bg-gray-200 hover:bg-orange-200 p-3 border-b 
   }
   .tile {
     @apply  p-3 rounded bg-white shadow-md 

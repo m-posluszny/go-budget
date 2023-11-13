@@ -13,6 +13,10 @@ type AccountForm struct {
 	Initial   float64 `form:"initial" binding:"required" url:"initial"`
 }
 
+func GetAccount(accUid string) (Account, error) {
+	return Account{Uid: accUid, Name: "Afdasfasd", Balance: 30000, Offbudget: false}, nil
+}
+
 func GetAccounts(uid string) ([]Account, []Account, error) {
 	var accs []Account
 	accs = append(accs, Account{"UID", "A", 100, false})
