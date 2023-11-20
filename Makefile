@@ -1,4 +1,4 @@
-css:
+tailwind:
 	npx tailwindcss -i ./src/static/tailwind.css -o ./src/static/styling.css --watch;
 
 setup:

@@ -9,13 +9,17 @@ import (
 	"github.com/m-posluszny/go-ynab/src/misc"
 )
 
+const PanelHtml = "panel.html"
+
 type PanelView struct {
 	Username string
+	UserUid  string
 	Category misc.PanelCategory
+	ErrMsg   string
 }
 
-func GetPanelView(creds *auth.Credentials, category misc.PanelCategory) PanelView {
-	return PanelView{creds.Username, category}
+func GetPanelView(creds *auth.Credentials, category misc.PanelCategory, errMsg string) PanelView {
+	return PanelView{creds.Username, creds.Uid, category, errMsg}
 }
 
 func RenderPanel(c *gin.Context) {
@@ -28,5 +32,5 @@ func RenderPanel(c *gin.Context) {
 	if err != nil {
 		panic(err)
 	}
-	c.HTML(http.StatusOK, "panel.html", GetPanelView(creds, misc.Panel))
+	c.HTML(http.StatusOK, "panel.html", GetPanelView(creds, misc.Panel, ""))
 }

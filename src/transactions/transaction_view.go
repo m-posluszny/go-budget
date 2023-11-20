@@ -1,7 +1,6 @@
 package transactions
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -11,6 +10,8 @@ import (
 	"github.com/m-posluszny/go-ynab/src/budgets"
 	"github.com/m-posluszny/go-ynab/src/dates"
 	"github.com/m-posluszny/go-ynab/src/db"
+	"github.com/m-posluszny/go-ynab/src/misc"
+	"github.com/m-posluszny/go-ynab/src/panel"
 )
 
 type TransactionView struct {
@@ -27,32 +28,32 @@ type TransactionQuery struct {
 	Month string `form:"month"`
 }
 
-func GetTransactionView(creds *auth.Credentials, accUid string, d time.Time) TransactionView {
-	account := accounts.GetAccountsView(creds)
-	acc, _ := accounts.GetAccount(accUid)
-	transacts, _ := GetTransactions(creds.Uid, accUid)
-	payees, _ := GetPayees(creds.Uid)
-	memos, _ := GetMemos(creds.Uid)
-	categories, _ := budgets.GetCategories(creds.Uid)
+func GetTransactionView(dbx *db.DBRead, panel panel.PanelView, accUid string, d time.Time) TransactionView {
+	account := accounts.GetAccountsView(dbx, panel)
+	acc, _ := accounts.GetAccountFromUid(dbx, accUid)
+	transacts, _ := GetTransactions(panel.UserUid, accUid)
+	payees, _ := GetPayees(panel.UserUid)
+	memos, _ := GetMemos(panel.UserUid)
+	categories, _ := budgets.GetCategories(panel.UserUid)
 	return TransactionView{account, acc, transacts, categories, memos, payees, dates.GetMonthSet(d)}
+}
+
+func GetTransactionQuery(c *gin.Context) TransactionQuery {
+	var q TransactionQuery
+	c.Bind(&q)
+	return q
 }
 
 func RenderPanel(c *gin.Context) {
 	accUid := c.Param("uid")
-	var q TransactionQuery
-	fmt.Print(c.Query("month"))
-	c.Bind(&q)
-	now := dates.MustDateFromString(q.Month)
-	uid, err := auth.GetUIDFromSession(c)
-	if err != nil {
-		panic(err)
-	}
 	dbx := db.GetDbRead()
-	creds, err := auth.GetUserFromUid(dbx, uid)
+	q := GetTransactionQuery(c)
+	creds, err := auth.GetCredsFromSession(dbx, c)
+	panel := panel.GetPanelView(creds, misc.Transactions, "")
 	if err != nil {
 		panic(err)
 	}
-
-	c.HTML(http.StatusOK, "transactions.html", GetTransactionView(creds, accUid, now))
+	now := dates.MustDateFromString(q.Month)
+	c.HTML(http.StatusOK, "transactions.html", GetTransactionView(dbx, panel, accUid, now))
 
 }

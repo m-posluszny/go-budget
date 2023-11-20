@@ -2,22 +2,19 @@ package auth
 
 import (
 	"errors"
-	"fmt"
+	"log/slog"
 	"net/http"
 
 	"regexp"
 
 	"github.com/gin-gonic/gin"
 	"github.com/m-posluszny/go-ynab/src/db"
+	"github.com/m-posluszny/go-ynab/src/misc"
 )
 
 var isUsernameValid = regexp.MustCompile(`^[a-zA-Z0-9]+$`).MatchString
 var isPasswordValid = regexp.MustCompile(`^[a-zA-Z0-9]+$`).MatchString
 
-func validateLength(s string, min int, max int) bool {
-	l := len(s)
-	return min <= l && l <= max
-}
 func RegisterPage(c *gin.Context) {
 	RenderRegister(c, "", http.StatusOK)
 }
@@ -28,13 +25,13 @@ func RenderRegister(c *gin.Context, err string, status int) {
 
 func validateForm(c *gin.Context, form *RegisterForm) error {
 	if err := c.ShouldBind(form); err != nil {
-		fmt.Println(err)
+		slog.Error(err.Error())
 		return errors.New("invalid input")
 	}
-	if !validateLength(form.Username, 4, 24) {
+	if !misc.ValidateLength(form.Username, 4, 24) {
 		return errors.New("username has to have between 4 and 24 characters")
 	}
-	if !validateLength(form.Password, 8, 64) {
+	if !misc.ValidateLength(form.Password, 8, 64) {
 		return errors.New("password has to have between 8 and 64 characters")
 	}
 	if !isUsernameValid(form.Username) {
@@ -52,7 +49,7 @@ func validateForm(c *gin.Context, form *RegisterForm) error {
 func GetRegisterForm(c *gin.Context) {
 	var form RegisterForm
 	if err := validateForm(c, &form); err != nil {
-		fmt.Println(err)
+		slog.Error(err.Error())
 		RenderRegister(c, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -60,7 +57,7 @@ func GetRegisterForm(c *gin.Context) {
 	creds, err := CreateUser(dbx, form.LoginForm.DbView())
 	if err != nil {
 		RenderRegister(c, "Username already taken", http.StatusForbidden)
-		fmt.Println(err)
+		slog.Error(err.Error())
 		return
 	}
 	CreateSession(c, creds.Uid)

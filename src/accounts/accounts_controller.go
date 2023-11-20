@@ -1,30 +1,39 @@
 package accounts
 
-type Account struct {
-	Uid       string
-	Name      string
-	Balance   float64
-	Offbudget bool
+import (
+	"github.com/m-posluszny/go-ynab/src/db"
+)
+
+func GetAccountFromUid(dbx *db.DBRead, accUid string) (Account, error) {
+	var acc Account
+	err := dbx.Get(&acc,
+		`SELECT * FROM credentials WHERE uid=$1;`,
+		accUid)
+	return acc, err
 }
 
-type AccountForm struct {
-	Name      string  `form:"name" binding:"required" url:"name"`
-	Offbudget bool    `form:"offbudget" binding:"required" url:"offbudget"`
-	Initial   float64 `form:"initial" binding:"required" url:"initial"`
-}
-
-func GetAccount(accUid string) (Account, error) {
-	return Account{Uid: accUid, Name: "Afdasfasd", Balance: 30000, Offbudget: false}, nil
-}
-
-func GetAccounts(uid string) ([]Account, []Account, error) {
+func GetAccountsFromUserUid(dbx *db.DBRead, q AccountsQuery) ([]Account, error) {
 	var accs []Account
-	accs = append(accs, Account{"UID", "A", 100, false})
-	accs = append(accs, Account{"UID", "Afdasfasd", 30000, false})
-	accs = append(accs, Account{"UID", "Afasvxzc", 100000, false})
-	accs = append(accs, Account{"UID", "Afdas", 100, false})
-	accs = append(accs, Account{"UID", "fdasfasdA", 100, true})
-	accs = append(accs, Account{"UID", "A", 100, true})
-	accs = append(accs, Account{"UID", "A", 100, true})
-	return accs, accs, nil
+	err := dbx.Get(&accs,
+		`SELECT * FROM accounts WHERE uid=$1; AND offbudget=$2`,
+		q.userUid, q.offBudget)
+	return accs, err
+}
+
+func CreateAccount(dbx *db.DBWrite, newAcc Account) (*Account, error) {
+	_, err := dbx.NamedExec(
+		`INSERT INTO accounts (uid, uid, password_hash) VALUES (:username, gen_random_uuid(), :password_hash);`,
+		newAcc)
+	if err != nil {
+		return nil, err
+	}
+
+	return &newAcc, nil
+}
+
+func DeleteAccount(dbx *db.DBWrite, accUid string) error {
+	_, err := dbx.Exec(
+		`DELETE FROM accounts WHERE uid=$1;`,
+		accUid)
+	return err
 }

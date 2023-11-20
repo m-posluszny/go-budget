@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"log/slog"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -50,7 +51,7 @@ func TestGetUserFromUid(t *testing.T) {
 
 	creds, err := auth.GetUserFromUid(db, mockCreds.Uid)
 	if err != nil {
-		fmt.Println(err)
+		slog.Error(err.Error())
 		t.Error("This test should not create err")
 	}
 	MockValidateCredentials(*creds, mockCreds, t)
@@ -62,7 +63,7 @@ func TestGetUserFromUidErr(t *testing.T) {
 	db, _ := db.GetMockDb()
 	_, err := auth.GetUserFromUid(db, "")
 	if err == nil {
-		fmt.Println(err)
+		slog.Error(err.Error())
 		t.Error("This test should create err")
 	}
 }
@@ -112,7 +113,7 @@ func TestCreateUser(t *testing.T) {
 	MockGetByUsername(&mock, MockCredentials())
 	_, err := auth.CreateUser(db, mockCreds)
 	if err != nil {
-		fmt.Println(err)
+		slog.Error(err.Error())
 		t.Error("This test should not create err")
 	}
 	misc_tests.FetchExpects(t, mock)
@@ -125,7 +126,7 @@ func TestCreateUserErr(t *testing.T) {
 	mock.ExpectExec(`INSERT INTO credentials \(username, uid, password_hash\) VALUES \(\?, gen_random_uuid\(\), \?\);`).WithArgs(mockCreds.Username, mockCreds.PasswordHash).WillReturnError(errors.New("db write error"))
 	_, err := auth.CreateUser(db, mockCreds)
 	if err == nil {
-		fmt.Println(err)
+		slog.Error(err.Error())
 		t.Error("This test should create err")
 	}
 	misc_tests.FetchExpects(t, mock)

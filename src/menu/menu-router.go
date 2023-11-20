@@ -16,6 +16,7 @@ func SetRoutes(r *gin.Engine) {
 	{
 		userPanel.GET("/", panel.RenderPanel)
 		userPanel.GET("/accounts", accounts.RenderPanel)
+		userPanel.POST("/accounts", accounts.PostCreateAccount)
 		userPanel.GET("/accounts/:uid", transactions.RenderPanel)
 	}
 	r.GET("/", func(c *gin.Context) {
