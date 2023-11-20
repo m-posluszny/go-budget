@@ -42,7 +42,7 @@ func (form LoginForm) DbView() Credentials {
 }
 
 func GetUserFromUid(dbx *db.DBRead, uid string) (*Credentials, error) {
-	creds := Credentials{}
+	var creds Credentials
 	err := dbx.Get(&creds,
 		`SELECT uid, username, password_hash FROM credentials WHERE uid=$1;`,
 		uid)
@@ -50,19 +50,26 @@ func GetUserFromUid(dbx *db.DBRead, uid string) (*Credentials, error) {
 }
 
 func GetUserFromName(dbx *db.DBRead, username string) (*Credentials, error) {
-	creds := Credentials{}
+	var creds Credentials
 	err := dbx.Get(&creds,
 		`SELECT uid, username, password_hash FROM credentials WHERE username=$1;`,
 		username)
 	return &creds, err
 }
 func CreateUser(dbx *db.DBWrite, newUser Credentials) (*Credentials, error) {
-	_, err := dbx.NamedExec(
-		`INSERT INTO credentials (username, uid, password_hash) VALUES (:username, gen_random_uuid(), :password_hash);`,
+	// handle err
+	row, err := dbx.NamedQuery(
+		`INSERT INTO credentials (username, uid, password_hash) VALUES (:username, gen_random_uuid(), :password_hash) RETURNING uid;`,
 		newUser)
+
+	var uid string
+	if row.Next() {
+		row.Scan(&uid)
+	}
 	if err != nil {
 		return nil, err
 	}
+
 	return GetUserFromName(dbx, newUser.Username)
 }
 

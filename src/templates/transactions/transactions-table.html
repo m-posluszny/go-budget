@@ -1,0 +1,32 @@
+<table class="table-fixed  text-center hover:table-fixed w-full  ">
+    <thead>
+        <tr>
+            <th class="th w-24"></th>
+            <th class="th">Date</th>
+            <th class="th">Payee</th>
+            <th class="th">Memo</th>
+            <th class="th">Category</th>
+            <th class="th">Value </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="p-3">
+            {{ template "transaction-row.html" dict "categories" $.Categories}}
+        </tr>
+        {{ range .Transactions }}
+        <tr class="tr">
+            {{ template "transaction-row.html" dict "Transaction" . "Categories" $.Categories "Uid" .Uid }}
+        </tr>
+        {{ end }}
+    </tbody>
+</table>
+<datalist id="payees">
+    {{ range .Payees}}
+    <option value="{{.}}">
+        {{ end }}
+</datalist>
+<datalist id="memos">
+    {{ range .Memos}}
+    <option value="{{.}}">
+        {{ end }}
+</datalist>

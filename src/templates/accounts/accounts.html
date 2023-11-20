@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+{{ template "head.html" "Accounts" }}
+
+<body class="container">
+    {{ template "navbar.html" .}}
+    <main class="flex p-5">
+        <div class="max-w-fit py-2 ps-2">
+            {{ template "accounts-list.html" .}}
+        </div>
+        <div class="p-2">
+            {{ template "accounts-form.html" .}}
+        </div>
+
+    </main>
+    {{ template "footer.html"}}
+</body>
+
+</html>

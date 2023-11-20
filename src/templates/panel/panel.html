@@ -1,31 +1,26 @@
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>GoBudget - Panel</title>
-    <link rel="stylesheet" type="text/css" href="/static/style.css" />
-    <link rel="stylesheet" type="text/css" href="/static/sizing.css" />
-  </head>
-  <body>
-    <table class="navbar">
-      <tbody>
-        <tr>
-          <td>
-            <span class="pagetop">
-              <strong> GoBudget </strong>|
-              <a href="/panel" class="selected">Panel</a>
-              <a href="/panel/accounts">Accounts</a>
-              <a href="/panel/budgets">Monthly Budgets</a>
-              <a href="/panel/accounts">Weekly Budgets</a>
-            </span>
-          </td>
-          <td class="mx-auto"></td>
-          <td>
-            <span class="pagetop nav-profile">
-              {{ .username}} |
-              <a href="/logout">logout</a>
-            </span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </body>
+{{ template "head.html" "Panel" }}
+
+<body class="container">
+    {{ template "navbar.html" .}}
+    <main class="main m-3">
+        <div class="tile w-fit mx-auto italic">
+            <p class="bold">Welcome to GoBudget!</p>
+            <hr class="my-2 font-bold">
+            <p>
+                Later you'll be able to see here, some stats, charts regarding
+                your
+                expenses.
+            </p>
+            <p>
+                Right now you can access your <a href="/panel/accounts">accounts</a>
+                and
+                <a href="/panel/budgets">budgets</a>
+            </p>
+        </div>
+    </main>
+    {{ template "footer.html" }}
+</body>
+
 </html>
