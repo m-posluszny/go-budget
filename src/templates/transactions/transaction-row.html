@@ -1,0 +1,40 @@
+{{ if .Transaction.Uid}}
+<td class="td p-0 block ">
+    <label for="check-{{.Transaction.Uid}}" class="block">
+        <input form="row-delete" id="check-{{.Transaction.Uid}}" class="scale-150 h-6 shadow-sm" type="checkbox">
+    </label>
+</td>
+{{ else }}
+<td class="td p-0">
+    <Button type="submit" class="p-2 m-0 w-fit  bg-orange-100  hover:bg-orange-200">
+        Add
+    </Button>
+</td>
+{{ end }}
+
+</td>
+<td class="td">
+    <input name="date-{{.Transaction.Uid}}" id="date-{{.Transaction.Uid}}" class="row-input" type="date"
+        value='{{.Transaction.Date.Format "2006-01-02" }}' required>
+</td>
+<td class="td">
+    <input id="payee-{{.Transaction.Uid}}" list="payees" name="payee-{{.Transaction.Uid}}" class="row-input"
+        placeholder="payee" value="{{.Transaction.Payee}}" required>
+</td>
+<td class="td">
+    <input id="memo-{{.Transaction.Uid}}" list="memos" name="memo-{{.Transaction.Uid}}" class="row-input"
+        placeholder="memo" value="{{.Transaction.Memo}}">
+</td>
+<td class="td">
+    <select id="category-{{.Transaction.Uid}}" value={{.Transaction.Category}} name="category-{{.Transaction.Uid}}"
+        class="row-input" id="cars" value="{{.Transaction.Category}}">
+        <option value=""></option>
+        {{ range .Categories}}
+        <option value="{{.Uid}}">{{.Name}}</option>
+        {{ end }}
+    </select>
+</td>
+<td class="td">
+    <input name="value-{{.Transaction.Uid}}" value='{{printf "%.2f" .Transaction.Value}}' type="number"
+        class="row-input" placeholder="value" required>
+</td>

@@ -1,0 +1,5 @@
+{{if eq .current .title }}
+<a href='{{.href}}' class="nav-item nav-selected">{{.title}}</a>
+{{ else }}
+<a href='{{.href}}' class="nav-item">{{.title}}</a>
+{{end}}

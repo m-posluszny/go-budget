@@ -2,6 +2,7 @@ package db
 
 import (
 	"fmt"
+	"log/slog"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/jmoiron/sqlx"
@@ -50,9 +51,10 @@ func connectDb(info config.DbConf) *sqlx.DB {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		info.Host, info.Port, info.User, info.Password, info.Name)
+	fmt.Printf(psqlInfo)
 	pgdb, err := sqlx.Connect("postgres", psqlInfo)
 	if err != nil {
-		fmt.Println(err)
+		slog.Error(err.Error())
 	}
 	return pgdb
 }

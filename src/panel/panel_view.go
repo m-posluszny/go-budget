@@ -6,7 +6,21 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/m-posluszny/go-ynab/src/auth"
 	"github.com/m-posluszny/go-ynab/src/db"
+	"github.com/m-posluszny/go-ynab/src/misc"
 )
+
+const PanelHtml = "panel.html"
+
+type PanelView struct {
+	Username string
+	UserUid  string
+	Category misc.PanelCategory
+	ErrMsg   string
+}
+
+func GetPanelView(creds *auth.Credentials, category misc.PanelCategory, errMsg string) PanelView {
+	return PanelView{creds.Username, creds.Uid, category, errMsg}
+}
 
 func RenderPanel(c *gin.Context) {
 	uid, err := auth.GetUIDFromSession(c)
@@ -18,5 +32,5 @@ func RenderPanel(c *gin.Context) {
 	if err != nil {
 		panic(err)
 	}
-	c.HTML(http.StatusOK, "panel.html", gin.H{"username": creds.Username})
+	c.HTML(http.StatusOK, "panel.html", GetPanelView(creds, misc.Panel, ""))
 }

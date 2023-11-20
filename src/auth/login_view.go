@@ -15,6 +15,7 @@ func GetLoginForm(c *gin.Context) {
 	var form LoginForm
 	if err := c.ShouldBind(&form); err != nil {
 		RenderLogin(c, "Bad credentials", http.StatusUnauthorized)
+		return
 	}
 	dbx := db.GetDbRead()
 	user, err := GetUserFromName(dbx, form.Username)
@@ -24,6 +25,7 @@ func GetLoginForm(c *gin.Context) {
 		return
 	} else {
 		RenderLogin(c, "Bad credentials", http.StatusUnauthorized)
+		return
 	}
 }
 

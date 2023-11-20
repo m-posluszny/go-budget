@@ -3,6 +3,7 @@ package auth
 import (
 	"errors"
 	"fmt"
+	"log/slog"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -20,7 +21,7 @@ func InitAuthSession(store sessions.Store) gin.HandlerFunc {
 func DeauthRedirect(c *gin.Context) {
 	err := DeleteSession(c)
 	if err != nil {
-		fmt.Println(err)
+		slog.Error(err.Error())
 	}
 	c.Redirect(http.StatusFound, "/login")
 }
@@ -70,4 +71,17 @@ func GetUIDFromSession(c *gin.Context) (string, error) {
 		return "", errors.New("empty user uid")
 	}
 	return uid.(string), nil
+}
+
+func GetCredsFromSession(dbx *db.DBRead, c *gin.Context) (*Credentials, error) {
+	uid, err := GetUIDFromSession(c)
+	if err != nil {
+		return nil, err
+	}
+	creds, err := GetUserFromUid(dbx, uid)
+	if err != nil {
+		return nil, err
+	}
+	return creds, err
+
 }

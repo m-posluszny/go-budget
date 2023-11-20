@@ -1,0 +1,39 @@
+<div class="tile p-5">
+    <div class="flex">
+        <h1 class=" text-xl font-bold mb-5">
+            Transactions - {{ .Account.Name }}
+        </h1>
+        <div class="ms-auto text-2xl rounded border p-3 bg-gray-100">
+            <a href='/panel/accounts/{{.Account.Uid}}?month={{.Months.Prev.Format "2006-01"}}'>
+                &lt;&lt;
+            </a>
+            <strong>
+                {{.Months.Curr.Format " Jan 2006"}} </strong>
+            <a href='/panel/accounts/{{.Account.Uid}}?month={{.Months.Next.Format "2006-01"}}'>
+                &gt;&gt;
+            </a>
+        </div>
+    </div>
+    <fieldset class="border border-slate-500 rounded p-3 w-fit mb-5 shadow">
+        <legend>Balance</legend>
+        <div>
+            Total: {{ .Account.Balance }}
+        </div>
+    </fieldset>
+    <form name="row-delete">
+        <form name="multi-edit">
+            <fieldset class="border border-slate-500 rounded p-3 w-fit mb-5 shadow">
+                <legend>Actions</legend>
+                <button type="submit" form="multi-edit" class="p-2 rounded shadow bg-green-300 hover:bg-green-400">
+                    Save Changes
+                </button>
+                <button type="submit" form="row-delete" class="p-2 rounded shadow bg-red-300 hover:bg-red-400">
+                    Delete selection
+                </button>
+            </fieldset>
+            <div class=" max-transact-height overflow-y-scroll px-3 ">
+                {{ template "transactions-table.html" . }}
+            </div>
+        </form>
+    </form>
+</div>
