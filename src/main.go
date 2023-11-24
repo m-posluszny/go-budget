@@ -5,12 +5,14 @@ import (
 
 	"github.com/m-posluszny/go-ynab/src/config"
 	"github.com/m-posluszny/go-ynab/src/db"
+	"github.com/m-posluszny/go-ynab/src/logging"
 	"github.com/m-posluszny/go-ynab/src/server"
 	"github.com/m-posluszny/go-ynab/src/stores"
 )
 
 func main() {
 	cfg := config.Init()
+	logging.InitLogger()
 	fmt.Println("DB host:", cfg.Db.Host)
 	db.InitDbs(cfg.Db, cfg.Db)
 	s := server.Init(cfg, stores.GetRedisSessionStore(cfg.Auth, cfg.Redis), "./src/templates/**/*")

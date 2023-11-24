@@ -1,6 +1,8 @@
 module github.com/m-posluszny/go-ynab
 
-go 1.20
+go 1.21
+
+toolchain go1.21.4
 
 require github.com/spf13/viper v1.17.0
 
@@ -13,6 +15,7 @@ require (
 	github.com/gorilla/securecookie v1.1.1 // indirect
 	github.com/gorilla/sessions v1.2.1 // indirect
 	github.com/jmoiron/sqlx v1.3.5 // indirect
+	github.com/lmittmann/tint v1.0.3 // indirect
 	resenje.org/marshal v0.1.1 // indirect
 )
 
