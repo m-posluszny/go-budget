@@ -1,6 +1,8 @@
 package accounts
 
 import (
+	"time"
+
 	"github.com/m-posluszny/go-ynab/src/auth"
 )
 
@@ -11,11 +13,12 @@ func (c CheckboxToggle) Bool() bool {
 }
 
 type Account struct {
-	Uid       string
-	UserUid   string `db:"user_uid"`
-	Name      string
-	Balance   float64
-	Offbudget bool
+	Uid          string
+	UserUid      string `db:"user_uid"`
+	Name         string
+	Balance      float64
+	Offbudget    bool
+	CreationDate time.Time `db:"creation_date"`
 }
 
 type AccountForm struct {

@@ -1,27 +1,13 @@
 package transactions
 
 import (
-	"math/rand"
-	"strconv"
-	"time"
+	"github.com/m-posluszny/go-ynab/src/db"
 )
-
-type Transaction struct {
-	Uid         string
-	Memo        string
-	Payee       string
-	Category    string
-	CategoryUid string
-	Date        time.Time
-	Value       float64
-}
 
 func GetTransactions(userUid string, accUid string) ([]Transaction, error) {
 	var transacts []Transaction
-	for i := 0; i < 100; i++ {
-		val := -1000 + rand.Float64()*(2000)
-		transacts = append(transacts, Transaction{strconv.Itoa(i), "Memo", "Payee", "Groceries", "GroUID", time.Now(), val})
-	}
+	dbx := db.GetDbRead()
+	dbx.Select(&transacts, "SELECT * FROM transactions WHERE user_uid = $1 AND account_uid = $2", userUid, accUid)
 	return transacts, nil
 
 }

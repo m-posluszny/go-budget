@@ -2,10 +2,12 @@ package accounts
 
 import (
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jmoiron/sqlx"
 	"github.com/m-posluszny/go-ynab/src/auth"
 	"github.com/m-posluszny/go-ynab/src/db"
 	"github.com/m-posluszny/go-ynab/src/misc"
@@ -14,18 +16,26 @@ import (
 
 type AccountsView struct {
 	panel.PanelView
+	Selected    Account
 	Budget      []Account
 	BudgetTypes []BudgetType
 	Offbudget   []Account
 }
 
-func GetAccountsView(dbx *db.DBRead, panel panel.PanelView) AccountsView {
+func GetAccountsView(dbx db.Queryable, panel panel.PanelView) AccountsView {
 	q := DefaultQuery(panel.UserUid)
+
 	q.offBudget = false
-	onAccs, _ := GetAccountsFromUserUid(dbx, q)
-	q.offBudget = false
-	offAccs, _ := GetAccountsFromUserUid(dbx, q)
-	return AccountsView{panel, onAccs, BudgetTypes, offAccs}
+	onAccs, err := GetAccountsFromUserUid(dbx, q)
+
+	q.offBudget = true
+	offAccs, errOff := GetAccountsFromUserUid(dbx, q)
+
+	errs := errors.Join(err, errOff)
+	if errs != nil {
+		slog.Error("GetAccountsView", "err", errs)
+	}
+	return AccountsView{panel, Account{}, onAccs, BudgetTypes, offAccs}
 }
 
 func RenderPanel(c *gin.Context) {
@@ -36,6 +46,41 @@ func RenderPanel(c *gin.Context) {
 	}
 	panel := panel.GetPanelView(creds, misc.Accounts, "")
 	c.HTML(http.StatusOK, "accounts.html", GetAccountsView(dbx, panel))
+}
+
+func RenderPanelDelete(c *gin.Context) {
+	dbx := db.GetDbRead()
+	accUid := c.Param("uid")
+	creds, err := auth.GetCredsFromSession(dbx, c)
+	if err != nil {
+		panic(err)
+	}
+	panel := panel.GetPanelView(creds, misc.Accounts, "")
+	accs := GetAccountsView(dbx, panel)
+	acc, err := GetAccountFromUid(dbx, accUid)
+	if err != nil {
+		panic(err)
+	}
+	accs.Selected = acc
+	c.HTML(http.StatusOK, "accounts-delete.html", accs)
+}
+
+func PostDeleteAccount(c *gin.Context) {
+	creds := panel.MustGetCreds(c)
+	err := db.Transact(func(dbx *sqlx.Tx) error {
+		accUid := c.Param("uid")
+		err := DeleteAccount(dbx, accUid)
+		if err != nil {
+			c.Redirect(http.StatusFound, fmt.Sprintf("/panel/accounts/%s/delete", accUid))
+			return err
+		}
+		c.Redirect(http.StatusFound, "/panel/accounts")
+		return nil
+	})
+	if err != nil {
+		slog.Error("Unhandled", "err", err)
+		panel.RenderPanelWithErr(c, "Unknown error occured", creds)
+	}
 }
 
 func validateForm(c *gin.Context, form *AccountForm) error {
@@ -50,22 +95,34 @@ func validateForm(c *gin.Context, form *AccountForm) error {
 }
 
 func PostCreateAccount(c *gin.Context) {
-	var form AccountForm
-	dbx := db.GetDbWrite()
-	creds, err := auth.GetCredsFromSession(dbx, c)
+	creds := panel.MustGetCreds(c)
+	err := db.Transact(func(dbx *sqlx.Tx) error {
+		var form AccountForm
+		var acc Account
+		if err := validateForm(c, &form); err != nil {
+			slog.Error("Validation Error", "msg", err)
+			RenderAccountError(err.Error(), c, creds, dbx)
+			return err
+		}
+
+		acc = form.DbView(creds)
+		uid, err := CreateAccount(dbx, acc)
+		if err != nil {
+			RenderAccountError("Unknown error occured", c, creds, dbx)
+			return err
+		}
+		c.Redirect(http.StatusFound, fmt.Sprintf("/panel/accounts/%s", uid))
+		return nil
+
+	})
 	if err != nil {
-		panic(err)
+		slog.Error("Create Account", "err", err)
+		panel.RenderPanelWithErr(c, "Unknown error occured", creds)
 	}
 
-	if err := validateForm(c, &form); err != nil {
-		slog.Error("Validation Error", err)
-		panel := panel.GetPanelView(creds, misc.Accounts, err.Error())
-		c.HTML(http.StatusBadRequest, "accounts.html", GetAccountsView(dbx, panel))
-		return
-	}
+}
 
-	acc := form.DbView(creds)
-	slog.Info("Account Info", acc)
-	c.Redirect(http.StatusFound, "/panel/accounts/uid")
-
+func RenderAccountError(errMsg string, c *gin.Context, creds *auth.Credentials, dbx db.Queryable) {
+	panel := panel.GetPanelView(creds, misc.Accounts, errMsg)
+	c.HTML(http.StatusBadRequest, "accounts.html", GetAccountsView(dbx, panel))
 }

@@ -22,13 +22,23 @@ func GetPanelView(creds *auth.Credentials, category misc.PanelCategory, errMsg s
 	return PanelView{creds.Username, creds.Uid, category, errMsg}
 }
 
-func RenderPanel(c *gin.Context) {
-	uid, err := auth.GetUIDFromSession(c)
+func MustGetCreds(c *gin.Context) *auth.Credentials {
+	dbx := db.GetDbRead()
+	creds, err := auth.GetCredsFromSession(dbx, c)
 	if err != nil {
 		panic(err)
 	}
+	return creds
+}
+
+func RenderPanelWithErr(c *gin.Context, errMsg string, creds *auth.Credentials) {
+	c.HTML(500, "panel.html", GetPanelView(creds, misc.Panel, errMsg))
+}
+
+func RenderPanel(c *gin.Context) {
+	creds := MustGetCreds(c)
 	dbx := db.GetDbRead()
-	creds, err := auth.GetUserFromUid(dbx, uid)
+	creds, err := auth.GetUserFromUid(dbx, creds.Uid)
 	if err != nil {
 		panic(err)
 	}

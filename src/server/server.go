@@ -8,6 +8,7 @@ import (
 	"github.com/m-posluszny/go-ynab/src/auth"
 	"github.com/m-posluszny/go-ynab/src/config"
 	"github.com/m-posluszny/go-ynab/src/menu"
+	"github.com/m-posluszny/go-ynab/src/recovery"
 )
 
 func Init(cfg config.Config, store sessions.Store, templateDir string) *gin.Engine {
@@ -21,9 +22,7 @@ func Init(cfg config.Config, store sessions.Store, templateDir string) *gin.Engi
 	authSess := auth.InitAuthSession(store)
 
 	srv.Use(authSess)
-	srv.Use(gin.CustomRecovery(func(c *gin.Context, err any) {
-		auth.RenderLogin(c, "Unknown Server Error", http.StatusFound)
-	}))
+	srv.Use(gin.CustomRecovery(recovery.Recover))
 	loadRoutes(srv)
 	return srv
 }

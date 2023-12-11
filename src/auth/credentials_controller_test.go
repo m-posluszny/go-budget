@@ -3,7 +3,6 @@ package auth_test
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"log/slog"
 	"testing"
 
@@ -76,7 +75,7 @@ func TestGetUserFromName(t *testing.T) {
 
 	creds, err := auth.GetUserFromName(db, mockCreds.Username)
 	if err != nil {
-		fmt.Println(err)
+		slog.Error(err.Error())
 		t.Error("This test should not create err")
 	}
 	MockValidateCredentials(*creds, mockCreds, t)
@@ -88,7 +87,7 @@ func TestGetUserFromNameErr(t *testing.T) {
 	db, _ := db.GetMockDb()
 	_, err := auth.GetUserFromName(db, "")
 	if err == nil {
-		fmt.Println(err)
+		slog.Error(err.Error())
 		t.Error("This test should create err")
 	}
 }

@@ -5,6 +5,10 @@
 <body class="container">
     {{ template "navbar.html" .}}
     <main class="main m-3">
+        <div class="w-fit mx-auto">
+            {{ template "form-error.html" .ErrMsg }}
+        </div>
+        {{if not .ErrMsg}}
         <div class="tile w-fit mx-auto italic">
             <p class="bold">Welcome to GoBudget!</p>
             <hr class="my-2 font-bold">
@@ -19,6 +23,7 @@
                 <a href="/panel/budgets">budgets</a>
             </p>
         </div>
+        {{end}}
     </main>
     {{ template "footer.html" }}
 </body>

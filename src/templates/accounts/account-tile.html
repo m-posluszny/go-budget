@@ -1,11 +1,15 @@
-<div>
-    <a href="/panel/accounts/{{.Uid}}" class="flex border p-1 rounded mb-2 hover:bg-orange-200 bg-gray-100 shadow">
+<div class="flex">
+    <a href="/panel/accounts/{{.Uid}}"
+        class="w-9/12 flex border p-1 rounded mb-2 hover:bg-orange-200 bg-gray-100 shadow">
         <strong class="me-5">
             {{.Name}}
         </strong>
-        <div class="ms-auto">
+        <div class="ms-auto me-2 bg-slate-300 shadow rounded-md px-1">
             {{.Balance}}
         </div>
-
+    </a>
+    <a href="/panel/accounts/{{.Uid}}/delete"
+        class="w-2/12 mx-1 bg-slate-400 hover:bg-red-400 text-white text-center mb-2 p-1 rounded-md shadow">
+        X
     </a>
 </div>

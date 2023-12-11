@@ -41,7 +41,7 @@ func (form LoginForm) DbView() Credentials {
 	return Credentials{Username: form.Username, PasswordHash: form.HashedPassword()}
 }
 
-func GetUserFromUid(dbx *db.DBRead, uid string) (*Credentials, error) {
+func GetUserFromUid(dbx db.Queryable, uid string) (*Credentials, error) {
 	var creds Credentials
 	err := dbx.Get(&creds,
 		`SELECT uid, username, password_hash FROM credentials WHERE uid=$1;`,
@@ -49,14 +49,14 @@ func GetUserFromUid(dbx *db.DBRead, uid string) (*Credentials, error) {
 	return &creds, err
 }
 
-func GetUserFromName(dbx *db.DBRead, username string) (*Credentials, error) {
+func GetUserFromName(dbx db.Queryable, username string) (*Credentials, error) {
 	var creds Credentials
 	err := dbx.Get(&creds,
 		`SELECT uid, username, password_hash FROM credentials WHERE username=$1;`,
 		username)
 	return &creds, err
 }
-func CreateUser(dbx *db.DBWrite, newUser Credentials) (*Credentials, error) {
+func CreateUser(dbx db.Queryable, newUser Credentials) (*Credentials, error) {
 	// handle err
 	row, err := dbx.NamedQuery(
 		`INSERT INTO credentials (username, uid, password_hash) VALUES (:username, gen_random_uuid(), :password_hash) RETURNING uid;`,
@@ -73,7 +73,7 @@ func CreateUser(dbx *db.DBWrite, newUser Credentials) (*Credentials, error) {
 	return GetUserFromName(dbx, newUser.Username)
 }
 
-func MustMatchPassword(dbx *db.DBRead, form LoginForm) bool {
+func MustMatchPassword(dbx db.Queryable, form LoginForm) bool {
 	creds, err := GetUserFromName(dbx, form.Username)
 	if err != nil {
 		panic(err)

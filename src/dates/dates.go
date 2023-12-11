@@ -1,7 +1,7 @@
 package dates
 
 import (
-	"fmt"
+	"log/slog"
 	"time"
 )
 
@@ -48,9 +48,8 @@ func GetMonthSet(date time.Time) MonthSet {
 
 func MustDateFromString(s string) time.Time {
 	t, err := time.Parse("2006-01", s)
-	print(t.GoString())
 	if err != nil {
-		fmt.Print(err)
+		slog.Error("Date string error:", err)
 		return time.Now()
 	}
 	return t

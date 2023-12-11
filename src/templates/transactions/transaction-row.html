@@ -1,17 +1,3 @@
-{{ if .Transaction.Uid}}
-<td class="td p-0 block ">
-    <label for="check-{{.Transaction.Uid}}" class="block">
-        <input form="row-delete" id="check-{{.Transaction.Uid}}" class="scale-150 h-6 shadow-sm" type="checkbox">
-    </label>
-</td>
-{{ else }}
-<td class="td p-0">
-    <Button type="submit" class="p-2 m-0 w-fit  bg-orange-100  hover:bg-orange-200">
-        Add
-    </Button>
-</td>
-{{ end }}
-
 </td>
 <td class="td">
     <input name="date-{{.Transaction.Uid}}" id="date-{{.Transaction.Uid}}" class="row-input" type="date"
@@ -38,3 +24,17 @@
     <input name="value-{{.Transaction.Uid}}" value='{{printf "%.2f" .Transaction.Value}}' type="number"
         class="row-input" placeholder="value" required>
 </td>
+
+{{ if .Transaction.Uid}}
+<td class="td p-0 block ">
+    <label for="check-{{.Transaction.Uid}}" class="block">
+        <input form="row-delete" id="check-{{.Transaction.Uid}}" class="scale-150 h-6 shadow-sm" type="checkbox">
+    </label>
+</td>
+{{ else }}
+<td class="td p-0">
+    <Button type="submit" class="p-2 m-0 w-fit  bg-orange-100  hover:bg-orange-200">
+        Add
+    </Button>
+</td>
+{{ end }}

@@ -2,7 +2,6 @@ package auth
 
 import (
 	"errors"
-	"fmt"
 	"log/slog"
 	"net/http"
 
@@ -26,13 +25,14 @@ func DeauthRedirect(c *gin.Context) {
 	c.Redirect(http.StatusFound, "/login")
 }
 
-func AuthRequired(c *gin.Context) {
+func HasAuth(c *gin.Context, dbx db.Queryable) bool {
+	_, err := GetCredsFromSession(dbx, c)
+	return err != nil
+}
 
+func AuthRequired(c *gin.Context) {
 	dbx := db.GetDbRead()
-	uid, err := GetUIDFromSession(c)
-	_, userErr := GetUserFromUid(dbx, uid)
-	if err != nil || userErr != nil {
-		fmt.Println("deauth")
+	if HasAuth(c, dbx) {
 		DeauthRedirect(c)
 		c.Abort()
 		return
@@ -73,7 +73,7 @@ func GetUIDFromSession(c *gin.Context) (string, error) {
 	return uid.(string), nil
 }
 
-func GetCredsFromSession(dbx *db.DBRead, c *gin.Context) (*Credentials, error) {
+func GetCredsFromSession(dbx db.Queryable, c *gin.Context) (*Credentials, error) {
 	uid, err := GetUIDFromSession(c)
 	if err != nil {
 		return nil, err

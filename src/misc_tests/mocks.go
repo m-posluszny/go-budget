@@ -3,7 +3,7 @@ package misc_tests
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
+	"log/slog"
 	"net/http/httptest"
 	"regexp"
 	"testing"
@@ -29,9 +29,9 @@ func MockInitMockServer() (*httptest.ResponseRecorder, *gin.Engine, sqlmock.Sqlm
 func CompareBody(w *httptest.ResponseRecorder, body string) bool {
 	b, err := regexp.MatchString(body, w.Body.String())
 	if !b {
-		fmt.Println("Looked for", body)
-		fmt.Println("Got", w.Body.String())
-		fmt.Println(b, err)
+		slog.Debug("Looked for", body, "")
+		slog.Debug("Got for", w.Body.String(), "")
+		slog.Debug("Regex & Error", b, err)
 	}
 	return b
 }

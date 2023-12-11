@@ -18,6 +18,8 @@ func SetRoutes(r *gin.Engine) {
 		userPanel.GET("/accounts", accounts.RenderPanel)
 		userPanel.POST("/accounts", accounts.PostCreateAccount)
 		userPanel.GET("/accounts/:uid", transactions.RenderPanel)
+		userPanel.GET("/accounts/:uid/delete", accounts.RenderPanelDelete)
+		userPanel.POST("/accounts/:uid/delete", accounts.PostDeleteAccount)
 	}
 	r.GET("/", func(c *gin.Context) {
 		c.Redirect(http.StatusSeeOther, "/panel")
